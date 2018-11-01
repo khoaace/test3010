@@ -6,13 +6,10 @@ import Toolbar from "@material-ui/core/Toolbar";
 import Typography from "@material-ui/core/Typography";
 import IconButton from "@material-ui/core/IconButton";
 import MenuIcon from "@material-ui/icons/Menu";
-import AccountCircle from "@material-ui/icons/AccountCircle";
-import Switch from "@material-ui/core/Switch";
-import FormControlLabel from "@material-ui/core/FormControlLabel";
-import FormGroup from "@material-ui/core/FormGroup";
 import MenuItem from "@material-ui/core/MenuItem";
 import Menu from "@material-ui/core/Menu";
 import Button from "@material-ui/core/Button";
+import Avatar from '@material-ui/core/Avatar'
 
 import { connect } from "react-redux";
 import { userLogin, checkLogined, userLogout } from "../../actions";
@@ -43,6 +40,7 @@ class Navbar extends Component {
   }
 
   handleMenu = event => {
+    console.log(this.props.data.user);
     this.setState({ anchorEl: event.currentTarget });
   };
 
@@ -56,11 +54,12 @@ class Navbar extends Component {
 
   handleSignOut = () => {
     this.props.userLogout();
+    this.setState({ anchorEl: null });
   };
 
   render() {
     const { classes } = this.props;
-    const { auth, anchorEl } = this.state;
+    const { anchorEl } = this.state;
     const open = Boolean(anchorEl);
     return (
       <AppBar position="static">
@@ -83,17 +82,17 @@ class Navbar extends Component {
                 onClick={this.handleMenu}
                 color="inherit"
               >
-                <AccountCircle />
+                <Avatar alt="Remy Sharp" src={this.props.data.user.photoURL} className={classes.avatar} />
               </IconButton>
               <Menu
                 id="menu-appbar"
                 anchorEl={anchorEl}
                 anchorOrigin={{
-                  vertical: "top",
+                  vertical: "bottom",
                   horizontal: "right"
                 }}
                 transformOrigin={{
-                  vertical: "top",
+                  vertical: "bottom",
                   horizontal: "right"
                 }}
                 open={open}

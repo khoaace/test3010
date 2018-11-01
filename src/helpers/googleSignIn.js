@@ -1,4 +1,4 @@
-import firebase, { auth, provider } from "../config/firebase";
+import { auth, provider } from "../config/firebase";
 
 export const loginGG = () => {
   return new Promise((resolve, reject) => {

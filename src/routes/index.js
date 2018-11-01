@@ -1,14 +1,13 @@
 import React from "react";
 import { Router, Switch, Route } from "react-router-dom";
-import Login from "../components/Login";
 import history from "../history";
-import Navbar from "../containers/Navbar/Navbar";
+import Home from "../components/Home";
 
 const routes = [
   {
-    path: "/login",
+    path: "/",
     exact: true,
-    main: () => <Navbar />
+    main: () => <Home />
   }
 ];
 

@@ -1,13 +1,20 @@
 import React from "react";
 import { Router, Switch, Route } from "react-router-dom";
 import history from "../history";
-import Home from "../components/Home";
+import Home from "../containers/Home";
+import Profile from "../containers/Profile";
+import Main from "../components/Main";
 
 const routes = [
   {
+    path: "/profile",
+    exact: true,
+    main: () => <Profile />
+  },
+  {
     path: "/",
     exact: true,
-    main: () => <Home />
+    main: () => <Main />
   }
 ];
 

@@ -1,8 +1,10 @@
 import { combineReducers } from "redux";
-import loginGoogle from "./LoginGoogle";
+import { firebaseReducer } from "react-redux-firebase";
+import { firestoreReducer } from "redux-firestore";
 
 const rootReducer = combineReducers({
-  loginGoogle
+  firebase: firebaseReducer,
+  firestore: firestoreReducer
 });
 
 export default rootReducer;

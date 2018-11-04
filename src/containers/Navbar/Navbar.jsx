@@ -9,10 +9,11 @@ import MenuIcon from "@material-ui/icons/Menu";
 import MenuItem from "@material-ui/core/MenuItem";
 import Menu from "@material-ui/core/Menu";
 import Button from "@material-ui/core/Button";
-import Avatar from '@material-ui/core/Avatar'
+import Avatar from "@material-ui/core/Avatar";
 
+import { compose } from "redux";
 import { connect } from "react-redux";
-import { userLogin, checkLogined, userLogout } from "../../actions";
+import { firebaseConnect, isLoaded, isEmpty } from "react-redux-firebase";
 
 const styles = {
   root: {
@@ -35,12 +36,7 @@ class Navbar extends Component {
     };
   }
 
-  componentDidMount() {
-    this.props.checkLogined();
-  }
-
   handleMenu = event => {
-    console.log(this.props.data.user);
     this.setState({ anchorEl: event.currentTarget });
   };
 
@@ -49,18 +45,25 @@ class Navbar extends Component {
   };
 
   handleSignIn = () => {
-    this.props.userLogin();
+    this.props.firebase.login({ provider: "google", type: "popup" });
   };
 
   handleSignOut = () => {
-    this.props.userLogout();
+    this.props.firebase.logout();
+    window.location.href = "/";
     this.setState({ anchorEl: null });
   };
 
   render() {
     const { classes } = this.props;
     const { anchorEl } = this.state;
+    var currentDate = new Date();
     const open = Boolean(anchorEl);
+    if (!isEmpty(this.props.auth))
+      this.props.firebase.updateProfile({
+        lastLogin: currentDate,
+        endedAt: this.props.firebase.database.ServerValue.TIMESTAMP
+      });
     return (
       <AppBar position="static">
         <Toolbar>
@@ -74,7 +77,7 @@ class Navbar extends Component {
           <Typography variant="h6" color="inherit" className={classes.grow}>
             Chat Group
           </Typography>
-          {this.props.data.logined && (
+          {!isEmpty(this.props.auth) && (
             <div>
               <IconButton
                 aria-owns={open ? "menu-appbar" : undefined}
@@ -82,7 +85,11 @@ class Navbar extends Component {
                 onClick={this.handleMenu}
                 color="inherit"
               >
-                <Avatar alt="Remy Sharp" src={this.props.data.user.photoURL} className={classes.avatar} />
+                <Avatar
+                  alt="Remy Sharp"
+                  src={this.props.auth.photoURL}
+                  className={classes.avatar}
+                />
               </IconButton>
               <Menu
                 id="menu-appbar"
@@ -99,13 +106,13 @@ class Navbar extends Component {
                 onClose={this.handleClose}
               >
                 <MenuItem onClick={this.handleClose}>
-                  {this.props.data.user.displayName}
+                  {this.props.auth.displayName}
                 </MenuItem>
                 <MenuItem onClick={this.handleSignOut}>Logout</MenuItem>
               </Menu>
             </div>
           )}
-          {!this.props.data.logined && (
+          {isEmpty(this.props.auth) && (
             <div>
               <Button color="inherit" onClick={this.handleSignIn}>
                 Login
@@ -118,25 +125,11 @@ class Navbar extends Component {
   }
 }
 
-function mapStateToProps(state) {
-  return {
-    data: state.loginGoogle
-  };
-}
-
-function mapDispatchToProps(dispatch) {
-  return {
-    userLogin: () => dispatch(userLogin()),
-    checkLogined: () => dispatch(checkLogined()),
-    userLogout: () => dispatch(userLogout())
-  };
-}
-
 Navbar.propTypes = {
   classes: PropTypes.object.isRequired
 };
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
+export default compose(
+  firebaseConnect(), // withFirebase can also be used
+  connect(({ firebase: { auth } }) => ({ auth }))
 )(withStyles(styles)(Navbar));

@@ -7,8 +7,47 @@ import { Provider } from "react-redux";
 import rootReducer from "./reducers";
 import thunk from "redux-thunk";
 import * as serviceWorker from "./serviceWorker";
+import { compose } from "redux";
+import { reactReduxFirebase } from "react-redux-firebase";
+import firebase from "firebase";
 
-const store = createStore(rootReducer, applyMiddleware(thunk));
+// Firebase config
+const firebaseConfig = {
+  apiKey: "AIzaSyCkyGjw4vdSlBEDpU3q7lHI6ooAy1kjQIk",
+  authDomain: "chat-group-tdk.firebaseapp.com",
+  databaseURL: "https://chat-group-tdk.firebaseio.com",
+  projectId: "chat-group-tdk",
+  storageBucket: "chat-group-tdk.appspot.com",
+  messagingSenderId: "551455828957"
+};
+
+const rrfConfig = {
+  userProfile: "users", // firebase root where user profiles are stored
+  attachAuthIsReady: true, // attaches auth is ready promise to store
+  firebaseStateName: "firebase", // should match the reducer name ('firebase' is default)
+  profileFactory: user => ({
+    email: user.email || user.providerData[0].email,
+    role: "user",
+    providerData: user.providerData
+  })
+};
+
+firebase.initializeApp(firebaseConfig);
+
+// react-redux-firebase options
+const config = {
+  userProfile: "users", // firebase root where user profiles are stored
+  enableLogging: false, // enable/disable Firebase's database logging
+  presence: "presence", // where list of online users is stored in database
+  sessions: "sessions" // where list of user sessions is stored in database (presence must be enabled)
+};
+
+// Add redux Firebase to compose
+const createStoreWithFirebase = compose(reactReduxFirebase(firebase, config))(
+  createStore
+);
+
+const store = createStoreWithFirebase(rootReducer, applyMiddleware(thunk));
 
 ReactDOM.render(
   <Provider store={store}>

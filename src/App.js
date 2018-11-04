@@ -2,6 +2,7 @@ import React, { Component, Fragment } from "react";
 import "./App.css";
 import { BrowserRouter } from "react-router-dom";
 import { routesMain } from "./routes/index";
+
 import Navbar from "./containers/Navbar/Navbar";
 
 class App extends Component {
@@ -9,7 +10,7 @@ class App extends Component {
     return (
       <BrowserRouter>
         <Fragment>
-         <Navbar />
+          <Navbar />
           <div>{routesMain()}</div>
         </Fragment>
       </BrowserRouter>

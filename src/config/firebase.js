@@ -1,4 +1,4 @@
-import firebase from "firebase";
+/* import firebase from "firebase";
 const config = {
   apiKey: "AIzaSyCkyGjw4vdSlBEDpU3q7lHI6ooAy1kjQIk",
   authDomain: "chat-group-tdk.firebaseapp.com",
@@ -10,4 +10,4 @@ const config = {
 firebase.initializeApp(config);
 export const provider = new firebase.auth.GoogleAuthProvider();
 export const auth = firebase.auth();
-export default firebase;
+export default firebase; */

@@ -1,7 +1,10 @@
 import React from "react";
-import { withStyles } from "@material-ui/core/styles";
-import Avatar from "@material-ui/core/Avatar";
 import moment from "moment";
+
+import { connect } from 'react-redux';
+import { compose } from 'redux';
+import { firebaseConnect } from 'react-redux-firebase';
+import history from '../history';
 
 class User extends React.Component {
   constructor(props) {
@@ -13,11 +16,17 @@ class User extends React.Component {
   componentDidMount = () => {
     var intervalId = setInterval(async () => {
       await this.setState({ date: moment(this.props.lastLogin).fromNow() });
-    }, 10000);
+    }, 1000);
   };
+  hello=()=>{
+    if(this.props.id < this.props.auth.uid)
+    history.replace(`/chat/${this.props.id}/${this.props.auth.uid}`);
+    else
+    history.replace(`/chat/${this.props.auth.uid}/${this.props.id}`);
+  }
   render() {
     return (
-      <li className="clearfix">
+      <li className="clearfix" onClick={this.hello}>
         <img
           src={this.props.avatarUrl}
           alt="avatar"
@@ -42,17 +51,13 @@ class User extends React.Component {
   }
 }
 
-const styles = {
-  root: {
-    flexGrow: 1
-  },
-  grow: {
-    flexGrow: 1
-  },
-  menuButton: {
-    marginLeft: -12,
-    marginRight: 20
-  }
-};
-
-export default withStyles(styles)(User);
+export default compose(
+  firebaseConnect([
+    {
+      path: "/users"
+    },
+  ]),
+  connect(state => ({
+    auth: state.firebase.auth,
+  }))
+)(User);

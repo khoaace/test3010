@@ -45,7 +45,9 @@ class Navbar extends Component {
   };
 
   handleSignIn = () => {
-    this.props.firebase.login({ provider: "google", type: "popup" });
+    this.props.firebase.login({ provider: "google", type: "popup" }).then(()=>{
+      console.log(this.props.auth);
+    });
   };
 
   handleSignOut = () => {

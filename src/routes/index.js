@@ -1,20 +1,13 @@
 import React from "react";
 import { Router, Switch, Route } from "react-router-dom";
 import history from "../history";
-import Home from "../containers/Home";
-import Profile from "../containers/Profile";
-import Main from "../components/Main";
+import ChatBox from "../containers/ChatBox";
 
 const routes = [
   {
-    path: "/profile",
+    path: "/chat/:user1/:user2",
     exact: true,
-    main: () => <Profile />
-  },
-  {
-    path: "/",
-    exact: true,
-    main: () => <Main />
+    main: () => <ChatBox />
   }
 ];
 

@@ -12,7 +12,6 @@ class App extends Component {
       <BrowserRouter>
         <Fragment>
           <Navbar />
-          <UserList />
           <div>{routesMain()}</div>
         </Fragment>
       </BrowserRouter>

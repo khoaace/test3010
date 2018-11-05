@@ -1,9 +1,15 @@
 import React from "react";
-import { Router, Switch, Route } from "react-router-dom";
+import { Router, Switch, Route, Redirect } from "react-router-dom";
 import history from "../history";
 import ChatBox from "../containers/ChatBox";
+import Login from "../components/Login";
 
 const routes = [
+  {
+    path: "/login",
+    exact: true,
+    main: () => <Login />
+  },
   {
     path: "/chat/:user1/:user2",
     exact: true,
@@ -27,7 +33,10 @@ export const routesMain = () => {
   }
   return (
     <Router history={history}>
-      <Switch>{result}</Switch>
+      <Switch>
+        {result}
+        <Redirect from="/" to="/login" />
+      </Switch>
     </Router>
   );
 };

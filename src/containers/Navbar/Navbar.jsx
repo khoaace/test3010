@@ -45,9 +45,11 @@ class Navbar extends Component {
   };
 
   handleSignIn = () => {
-    this.props.firebase.login({ provider: "google", type: "popup" }).then(()=>{
-      console.log(this.props.auth);
-    });
+    this.props.firebase
+      .login({ provider: "google", type: "popup" })
+      .then(() => {
+        console.log(this.props.auth);
+      });
   };
 
   handleSignOut = () => {
@@ -77,7 +79,7 @@ class Navbar extends Component {
             <MenuIcon />
           </IconButton>
           <Typography variant="h6" color="inherit" className={classes.grow}>
-            Chat Group
+            Mét sen gơ
           </Typography>
           {!isEmpty(this.props.auth) && (
             <div>

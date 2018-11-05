@@ -26,7 +26,7 @@ const enhance = compose(
  class ChatBox extends React.Component {
    constructor(props) {
      super(props);
-     this.state = { content: 'test' }
+     this.state = { content: '' }
    }
 
    handleChangeContent=(e)=>{
@@ -52,8 +52,9 @@ const enhance = compose(
        });
      }
      var dateTime = new Date().toDateString();
-     const handleClick = ()=>{
-        firebase.push(`messages/${match.params.user1}-${match.params.user2}`,{content: this.state.content, userId : auth.uid, dateTime: dateTime , username: auth.displayName});
+     const handleClick = async()=>{
+        await firebase.push(`messages/${match.params.user1}-${match.params.user2}`,{content: this.state.content, userId : auth.uid, dateTime: dateTime , username: auth.displayName});
+        await this.setState({content :''});
      };
      var renderMessages = messages_Arr.map((message,index)=>{
        if(!isEmpty(messages))
@@ -99,7 +100,7 @@ const enhance = compose(
           id="message-to-send"
           placeholder="Type your message"
           rows={3}
-          defaultValue={this.state.content}
+          value={this.state.content}
           onChange={(e)=>this.handleChangeContent(e)}
        />
         <i className="fa fa-file-o" /> 

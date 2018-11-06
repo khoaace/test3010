@@ -17,6 +17,8 @@ import history from "../history";
 import ScrollToBottom from "react-scroll-to-bottom";
 import { css } from "glamor";
 
+var moment = require('moment');
+
 const ROOT_CSS = css({
   height: 515,
   width: "100%"
@@ -61,7 +63,7 @@ class ChatBox extends React.Component {
         this.props.match.params.user1 !== auth.uid &&
         this.props.match.params.user2 !== auth.uid
       )
-        history.replace("/login");
+        history.replace("/error");
     }
   }
 
@@ -81,7 +83,6 @@ class ChatBox extends React.Component {
   }
 
   handleClick = async () => {
-    var currentDate = new Date();
     if (!isEmpty(this.props.auth))
     {
     await this.props.firebase.push(
@@ -89,7 +90,7 @@ class ChatBox extends React.Component {
       {
         content: this.state.content,
         userId: this.props.auth.uid,
-        chatTime: currentDate,
+        chatTime: moment().toISOString(),
         username: this.props.auth.displayName
       }
     );
@@ -121,7 +122,7 @@ class ChatBox extends React.Component {
               key={index}
               content={message.content}
               name={message.username}
-              date={message.dateTime}
+              date={moment(message.chatTime).format('LLL')}
               owner={true}
             />
           );
@@ -131,7 +132,7 @@ class ChatBox extends React.Component {
               key={index}
               content={message.content}
               name={message.username}
-              date={message.dateTime}
+              date={moment(message.chatTime).format('LLL')}
               owner={false}
             />
           );

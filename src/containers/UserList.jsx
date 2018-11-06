@@ -8,28 +8,35 @@ import List from '@material-ui/core/List';
 
 import Notification from "../components/Notification";
 import Divider from '@material-ui/core/Divider';
+import { func } from "prop-types";
 
+
+var moment = require('moment');
+var _ = require("lodash");
 require("../style/style.scss");
 
-const UserList = ({ firebase, users, presence, sessions }) => {
+const UserList = ({ firebase, users, presence, messages, sessions, auth }) => {
   var _ = require("lodash");
   var users_Arr,
-    status_users_Arr,
+    message_Arr,
     user_Render = [];
-  if (!isEmpty(users)) {
-    users_Arr = _.map(users, (val, id) => {
+  var user_Arr_priority=[];
+  if (!isEmpty(users) && !isEmpty(auth) &&!isEmpty(messages)  ) {
+    users_Arr = handleSortUser(auth,users,messages);
+    message_Arr = _.map(messages, (val, id) => {
       return { ...val, id: id };
     });
-    status_users_Arr = _.map(presence, (val, id) => {
-      return { ...val };
-    });
+    var ref = firebase.database().ref("users/EIPCnZOhpcdu9Syv6liIagZBtAc2");
+ref.orderByKey().endAt("pterodactyl").on("child_added", function(snapshot) {
+});
+
     user_Render = users_Arr.map((user, index) => {
       if (!isEmpty(presence) && isLoaded(presence)) {
-        if (presence[user.id]) {
+        if (presence[user.userId]) {
           return (
             <UserSection
               key={index}
-              id={user.id}
+              id={user.userId}
               displayName={user.displayName}
               avatarUrl={user.avatarUrl}
               status={"online"}
@@ -40,7 +47,7 @@ const UserList = ({ firebase, users, presence, sessions }) => {
           return (
             <UserSection
               key={index}
-              id={user.id}
+              id={user.userId}
               displayName={user.displayName}
               avatarUrl={user.avatarUrl}
               status={"offline"}
@@ -52,7 +59,7 @@ const UserList = ({ firebase, users, presence, sessions }) => {
         return (
           <UserSection
             key={index}
-            id={user.id}
+            id={user.userId}
             displayName={user.displayName}
             avatarUrl={user.avatarUrl}
             status={"offline"}
@@ -62,6 +69,7 @@ const UserList = ({ firebase, users, presence, sessions }) => {
       }
     });
   }
+  
 
   return (
     <div className="container clearfix">
@@ -91,11 +99,52 @@ export default compose(
     },
     {
       path: "/sessions"
-    }
+    },
+    {
+      path: "/messages"
+    },
+    
   ]),
   connect(state => ({
     users: state.firebase.data["users"],
     presence: state.firebase.data["presence"],
-    sessions: state.firebase.data["sessions"]
+    sessions: state.firebase.data["sessions"],
+    messages: state.firebase.data["messages"],
+    auth: state.firebase.auth,
   }))
 )(UserList);
+
+
+function handleSortUser(auth, users, messages){
+  let users_arr =[];
+  users_arr = _.map(users, (val, id) => {
+    return { ...val, id: id };
+  });
+  let result = users_arr.map((user,index) =>{
+    if((sortUid(auth.uid,user.userId) in messages))
+  {
+    if(messages[sortUid(auth.uid,user.userId)] !== null)
+    {
+    let user_messgage = Object.values(messages[sortUid(auth.uid,user.userId)]);
+    let time = user_messgage[user_messgage.length-1].chatTime;
+    return {...user,lastChat:time};
+    }
+    else
+    {
+      return {...user,lastChat:"0"};
+    }
+  }
+  return {...user,lastChat:"0"};
+  });
+let lastresult = _.orderBy(result, 'lastChat','desc');
+  console.log(lastresult);
+  return lastresult;
+}
+
+function sortUid(user1_id, user2_id){
+  if(user1_id < user2_id)
+    return `${user1_id}-${user2_id}`;
+    else
+    return `${user2_id}-${user1_id}`;
+}
+

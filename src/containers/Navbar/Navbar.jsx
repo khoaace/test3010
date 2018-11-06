@@ -12,9 +12,13 @@ import Button from "@material-ui/core/Button";
 import Avatar from "@material-ui/core/Avatar";
 
 
+import history from "../../history";
+
 import { compose } from "redux";
 import { connect } from "react-redux";
 import { firebaseConnect, isLoaded, isEmpty } from "react-redux-firebase";
+
+var moment = require('moment');
 
 const styles = {
   root: {
@@ -36,6 +40,7 @@ class Navbar extends Component {
       anchorEl: null
     };
   }
+
 
   handleMenu = event => {
     this.setState({ anchorEl: event.currentTarget });
@@ -61,13 +66,13 @@ class Navbar extends Component {
   render() {
     const { classes } = this.props;
     const { anchorEl } = this.state;
-    var currentDate = new Date();
     const open = Boolean(anchorEl);
-    if (!isEmpty(this.props.auth))
-      this.props.firebase.updateProfile({
-        lastLogin: currentDate,
-        endedAt: this.props.firebase.database.ServerValue.TIMESTAMP
-      });
+    if(!isEmpty(this.props.auth))
+    {
+    this.props.firebase.database().ref('users/' + this.props.auth.uid + '/lastLogin').onDisconnect().set(moment().toISOString());
+    this.props.firebase.database().ref('users/' + this.props.auth.uid + '/userId').set(this.props.auth.uid);
+    }
+    
     return (
       <AppBar position="static">
         <Toolbar>
@@ -132,6 +137,8 @@ class Navbar extends Component {
 Navbar.propTypes = {
   classes: PropTypes.object.isRequired
 };
+
+
 
 export default compose(
   firebaseConnect(), // withFirebase can also be used

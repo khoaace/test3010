@@ -10,6 +10,7 @@ import {
 import { withRouter } from "react-router";
 import Message from "../components/Message";
 import UserList from "../containers/UserList";
+import Button from "@material-ui/core/Button";
 
 import history from "../history";
 
@@ -79,9 +80,27 @@ class ChatBox extends React.Component {
     this.scrollToBottom();
   }
 
+  handleClick = async () => {
+    var currentDate = new Date();
+    if (!isEmpty(this.props.auth))
+    {
+    await this.props.firebase.push(
+      `messages/${this.props.match.params.user1}-${this.props.match.params.user2}`,
+      {
+        content: this.state.content,
+        userId: this.props.auth.uid,
+        chatTime: currentDate,
+        username: this.props.auth.displayName
+      }
+    );
+    }
+    await this.setState({ content: "" });
+  };
+
   render() {
     const { firebase, messages, auth, match, user1, user2 } = this.props;
     var otherUser = {};
+
     if (!isEmpty(user1) && !isEmpty(user2)) {
       if (match.params.user1 === auth.uid) otherUser = user2;
       else otherUser = user1;
@@ -93,19 +112,7 @@ class ChatBox extends React.Component {
         return { ...val, id: id };
       });
     }
-    var dateTime = new Date().toDateString();
-    const handleClick = async () => {
-      await firebase.push(
-        `messages/${match.params.user1}-${match.params.user2}`,
-        {
-          content: this.state.content,
-          userId: auth.uid,
-          dateTime: dateTime,
-          username: auth.displayName
-        }
-      );
-      await this.setState({ content: "" });
-    };
+
     var renderMessages = messages_Arr.map((message, index) => {
       if (!isEmpty(messages)) {
         if (message.userId === auth.uid)
@@ -139,7 +146,7 @@ class ChatBox extends React.Component {
             <img
               src={otherUser.avatarUrl}
               alt="avatar"
-              onClick={handleClick}
+              onClick={this.handleClick}
               style={{
                 width: 54,
                 height: 54,
@@ -175,7 +182,7 @@ class ChatBox extends React.Component {
             />
             <i className="fa fa-file-o" />
             <i className="fa fa-file-image-o" />
-            <button onClick={handleClick}>Send</button>
+            <Button onClick={this.handleClick} variant="contained" color="secondary">Send</Button>
           </div>
         </div>
       </Fragment>

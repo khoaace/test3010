@@ -12,7 +12,7 @@ class Login extends React.Component {
     }
   }
   render() {
-    return <h1>Đăng nhập đi má</h1>;
+    return <center><h1>Đăng nhập đi má</h1></center>;
   }
 }
 

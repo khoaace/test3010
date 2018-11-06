@@ -4,8 +4,10 @@ import { firebaseConnect, isLoaded, isEmpty } from "react-redux-firebase";
 import { compose } from "redux";
 import { connect } from "react-redux";
 import UserSection from "./User";
+import List from '@material-ui/core/List';
 
 import Notification from "../components/Notification";
+import Divider from '@material-ui/core/Divider';
 
 require("../style/style.scss");
 
@@ -73,7 +75,7 @@ const UserList = ({ firebase, users, presence, sessions }) => {
           <input type="text" placeholder="search" />
           <i className="fa fa-search" />
         </div>
-        <ul className="list">{user_Render}</ul>
+        <List component="nav"> <Divider light />{user_Render}</List>
       </div>
 
     </div>

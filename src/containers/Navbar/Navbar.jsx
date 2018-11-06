@@ -11,6 +11,7 @@ import Menu from "@material-ui/core/Menu";
 import Button from "@material-ui/core/Button";
 import Avatar from "@material-ui/core/Avatar";
 
+
 import { compose } from "redux";
 import { connect } from "react-redux";
 import { firebaseConnect, isLoaded, isEmpty } from "react-redux-firebase";
@@ -48,7 +49,6 @@ class Navbar extends Component {
     this.props.firebase
       .login({ provider: "google", type: "popup" })
       .then(() => {
-        console.log(this.props.auth);
       });
   };
 
@@ -118,7 +118,7 @@ class Navbar extends Component {
           )}
           {isEmpty(this.props.auth) && (
             <div>
-              <Button color="inherit" onClick={this.handleSignIn}>
+              <Button variant="contained" color="primary" onClick={this.handleSignIn}>
                 Login
               </Button>
             </div>

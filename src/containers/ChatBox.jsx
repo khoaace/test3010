@@ -1,12 +1,7 @@
 import React, { Fragment } from "react";
 import { connect } from "react-redux";
 import { compose } from "redux";
-import {
-  firebaseConnect,
-  getVal,
-  isEmpty,
-  isLoaded
-} from "react-redux-firebase";
+import { firebaseConnect, getVal, isEmpty } from "react-redux-firebase";
 import { withRouter } from "react-router";
 import Message from "../components/Message";
 import UserList from "../containers/UserList";
@@ -17,7 +12,7 @@ import history from "../history";
 import ScrollToBottom from "react-scroll-to-bottom";
 import { css } from "glamor";
 
-var moment = require('moment');
+var moment = require("moment");
 
 const ROOT_CSS = css({
   height: 515,
@@ -83,25 +78,25 @@ class ChatBox extends React.Component {
   }
 
   handleClick = async () => {
-    if (!isEmpty(this.props.auth))
-    {
-    await this.props.firebase.push(
-      `messages/${this.props.match.params.user1}-${this.props.match.params.user2}`,
-      {
-        content: this.state.content,
-        userId: this.props.auth.uid,
-        chatTime: moment().toISOString(),
-        username: this.props.auth.displayName
-      }
-    );
+    if (!isEmpty(this.props.auth)) {
+      await this.props.firebase.push(
+        `messages/${this.props.match.params.user1}-${
+          this.props.match.params.user2
+        }`,
+        {
+          content: this.state.content,
+          userId: this.props.auth.uid,
+          chatTime: moment().toISOString(),
+          username: this.props.auth.displayName
+        }
+      );
     }
     await this.setState({ content: "" });
   };
 
   render() {
-    const { firebase, messages, auth, match, user1, user2 } = this.props;
+    const { messages, auth, match, user1, user2 } = this.props;
     var otherUser = {};
-
     if (!isEmpty(user1) && !isEmpty(user2)) {
       if (match.params.user1 === auth.uid) otherUser = user2;
       else otherUser = user1;
@@ -113,7 +108,6 @@ class ChatBox extends React.Component {
         return { ...val, id: id };
       });
     }
-
     var renderMessages = messages_Arr.map((message, index) => {
       if (!isEmpty(messages)) {
         if (message.userId === auth.uid)
@@ -122,7 +116,7 @@ class ChatBox extends React.Component {
               key={index}
               content={message.content}
               name={message.username}
-              date={moment(message.chatTime).format('LLL')}
+              date={moment(message.chatTime).format("LLL")}
               owner={true}
             />
           );
@@ -132,7 +126,7 @@ class ChatBox extends React.Component {
               key={index}
               content={message.content}
               name={message.username}
-              date={moment(message.chatTime).format('LLL')}
+              date={moment(message.chatTime).format("LLL")}
               owner={false}
             />
           );
@@ -183,7 +177,13 @@ class ChatBox extends React.Component {
             />
             <i className="fa fa-file-o" />
             <i className="fa fa-file-image-o" />
-            <Button onClick={this.handleClick} variant="contained" color="secondary">Send</Button>
+            <Button
+              onClick={this.handleClick}
+              variant="contained"
+              color="secondary"
+            >
+              Send
+            </Button>
           </div>
         </div>
       </Fragment>

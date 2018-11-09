@@ -1,7 +1,5 @@
 import React from "react";
-import { compose } from "redux";
 import { connect } from "react-redux";
-import { isLoaded, isEmpty } from "react-redux-firebase";
 
 import history from "../history";
 
@@ -12,7 +10,11 @@ class Login extends React.Component {
     }
   }
   render() {
-    return <center><h1>Đăng nhập đi má</h1></center>;
+    return (
+      <center>
+        <h1>You are not logged in. Please log in and try again</h1>
+      </center>
+    );
   }
 }
 

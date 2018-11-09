@@ -21,17 +21,6 @@ const firebaseConfig = {
   messagingSenderId: "551455828957"
 };
 
-const rrfConfig = {
-  userProfile: "users", // firebase root where user profiles are stored
-  attachAuthIsReady: true, // attaches auth is ready promise to store
-  firebaseStateName: "firebase", // should match the reducer name ('firebase' is default)
-  profileFactory: user => ({
-    email: user.email || user.providerData[0].email,
-    role: "user",
-    providerData: user.providerData
-  })
-};
-
 firebase.initializeApp(firebaseConfig);
 
 // react-redux-firebase options

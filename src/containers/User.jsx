@@ -1,13 +1,13 @@
 import React, { Fragment } from "react";
 import moment from "moment";
 
-import { connect } from 'react-redux';
-import { compose } from 'redux';
-import { firebaseConnect } from 'react-redux-firebase';
+import { connect } from "react-redux";
+import { compose } from "redux";
+import { firebaseConnect } from "react-redux-firebase";
 
-import ListItem from '@material-ui/core/ListItem';
-import history from '../history';
-import Divider from '@material-ui/core/Divider';
+import ListItem from "@material-ui/core/ListItem";
+import history from "../history";
+import Divider from "@material-ui/core/Divider";
 
 class User extends React.Component {
   constructor(props) {
@@ -17,20 +17,19 @@ class User extends React.Component {
     };
   }
   componentDidMount = () => {
-    var intervalId = setInterval(async () => {
+    setInterval(async () => {
       await this.setState({ date: moment(this.props.lastLogin).fromNow() });
     }, 1000);
   };
   handleClickUser = () => {
     if (this.props.id < this.props.auth.uid)
       history.replace(`/chat/${this.props.id}/${this.props.auth.uid}`);
-    else
-      history.replace(`/chat/${this.props.auth.uid}/${this.props.id}`);
-  }
+    else history.replace(`/chat/${this.props.auth.uid}/${this.props.id}`);
+  };
   render() {
     return (
       <Fragment>
-        <ListItem button onClick={this.handleClickUser} >
+        <ListItem button onClick={this.handleClickUser}>
           <img
             src={this.props.avatarUrl}
             alt="avatar"
@@ -60,9 +59,9 @@ export default compose(
   firebaseConnect([
     {
       path: "/users"
-    },
+    }
   ]),
   connect(state => ({
-    auth: state.firebase.auth,
+    auth: state.firebase.auth
   }))
 )(User);

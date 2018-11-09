@@ -11,14 +11,11 @@ import Menu from "@material-ui/core/Menu";
 import Button from "@material-ui/core/Button";
 import Avatar from "@material-ui/core/Avatar";
 
-
-import history from "../../history";
-
 import { compose } from "redux";
 import { connect } from "react-redux";
-import { firebaseConnect, isLoaded, isEmpty } from "react-redux-firebase";
+import { firebaseConnect, isEmpty } from "react-redux-firebase";
 
-var moment = require('moment');
+var moment = require("moment");
 
 const styles = {
   root: {
@@ -41,9 +38,12 @@ class Navbar extends Component {
     };
   }
 
-
   handleMenu = event => {
     this.setState({ anchorEl: event.currentTarget });
+  };
+
+  handleClickHome = () => {
+    window.location.href = "/";
   };
 
   handleClose = () => {
@@ -53,8 +53,7 @@ class Navbar extends Component {
   handleSignIn = () => {
     this.props.firebase
       .login({ provider: "google", type: "popup" })
-      .then(() => {
-      });
+      .then(() => {});
   };
 
   handleSignOut = () => {
@@ -67,12 +66,18 @@ class Navbar extends Component {
     const { classes } = this.props;
     const { anchorEl } = this.state;
     const open = Boolean(anchorEl);
-    if(!isEmpty(this.props.auth))
-    {
-    this.props.firebase.database().ref('users/' + this.props.auth.uid + '/lastLogin').onDisconnect().set(moment().toISOString());
-    this.props.firebase.database().ref('users/' + this.props.auth.uid + '/userId').set(this.props.auth.uid);
+    if (!isEmpty(this.props.auth)) {
+      this.props.firebase
+        .database()
+        .ref("users/" + this.props.auth.uid + "/lastLogin")
+        .onDisconnect()
+        .set(moment().toISOString());
+      this.props.firebase
+        .database()
+        .ref("users/" + this.props.auth.uid + "/userId")
+        .set(this.props.auth.uid);
     }
-    
+
     return (
       <AppBar position="static">
         <Toolbar>
@@ -80,6 +85,7 @@ class Navbar extends Component {
             className={classes.menuButton}
             color="inherit"
             aria-label="Menu"
+            onClick={this.handleClickHome}
           >
             <MenuIcon />
           </IconButton>
@@ -123,7 +129,11 @@ class Navbar extends Component {
           )}
           {isEmpty(this.props.auth) && (
             <div>
-              <Button variant="contained" color="primary" onClick={this.handleSignIn}>
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={this.handleSignIn}
+              >
                 Login
               </Button>
             </div>
@@ -137,8 +147,6 @@ class Navbar extends Component {
 Navbar.propTypes = {
   classes: PropTypes.object.isRequired
 };
-
-
 
 export default compose(
   firebaseConnect(), // withFirebase can also be used

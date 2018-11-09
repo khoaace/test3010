@@ -4,7 +4,6 @@ import { BrowserRouter } from "react-router-dom";
 import { routesMain } from "./routes/index";
 
 import Navbar from "./containers/Navbar/Navbar";
-import UserList from "./containers/UserList";
 
 class App extends Component {
   render() {

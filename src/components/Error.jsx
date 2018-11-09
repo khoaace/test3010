@@ -1,7 +1,5 @@
 import React from "react";
-import { compose } from "redux";
 import { connect } from "react-redux";
-import { isLoaded, isEmpty } from "react-redux-firebase";
 
 import history from "../history";
 
@@ -12,7 +10,11 @@ class Error extends React.Component {
     }
   }
   render() {
-    return <center><h1>404 NOT FOUND</h1></center>;
+    return (
+      <center>
+        <h1>404 NOT FOUND</h1>
+      </center>
+    );
   }
 }
 

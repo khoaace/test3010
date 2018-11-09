@@ -1,12 +1,7 @@
 import React, { Fragment } from "react";
 import { connect } from "react-redux";
 import { compose } from "redux";
-import {
-  firebaseConnect,
-  getVal,
-  isEmpty,
-  isLoaded
-} from "react-redux-firebase";
+import { firebaseConnect, getVal, isEmpty } from "react-redux-firebase";
 import { withRouter } from "react-router";
 import Message from "../components/Message";
 import UserList from "../containers/UserList";
@@ -25,7 +20,7 @@ import history from "../history";
 import ScrollToBottom from "react-scroll-to-bottom";
 import { css } from "glamor";
 
-var moment = require('moment');
+var moment = require("moment");
 
 const ROOT_CSS = css({
   height: 515,
@@ -139,9 +134,8 @@ class ChatBox extends React.Component {
   };
 
   render() {
-    const { firebase, messages, auth, match, user1, user2 } = this.props;
+    const { messages, auth, match, user1, user2 } = this.props;
     var otherUser = {};
-
     if (!isEmpty(user1) && !isEmpty(user2)) {
       if (match.params.user1 === auth.uid) otherUser = user2;
       else otherUser = user1;
@@ -153,7 +147,6 @@ class ChatBox extends React.Component {
         return { ...val, id: id };
       });
     }
-
     var renderMessages = messages_Arr.map((message, index) => {
       if (!isEmpty(messages)) {
         console.log(message.imageURL);
@@ -163,7 +156,7 @@ class ChatBox extends React.Component {
               key={index}
               content={message.content}
               name={message.username}
-              date={moment(message.chatTime).format('LLL')}
+              date={moment(message.chatTime).format("LLL")}
               owner={true}
               imageURL={message.imageURL}
             />
@@ -174,7 +167,7 @@ class ChatBox extends React.Component {
               key={index}
               content={message.content}
               name={message.username}
-              date={moment(message.chatTime).format('LLL')}
+              date={moment(message.chatTime).format("LLL")}
               owner={false}
               imageURL={message.imageURL}
             />

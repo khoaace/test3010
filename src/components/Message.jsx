@@ -1,6 +1,7 @@
 import React, { Fragment } from 'react';
 
-const Messenge = ({ content, name, date, owner }) => {
+const Messenge = ({ content, name, date, owner, imageURL }) => {
+    console.log(imageURL);
     return (
         <Fragment>
             {owner ? (<li className="clearfix">
@@ -10,7 +11,9 @@ const Messenge = ({ content, name, date, owner }) => {
                 </div>
                 <div className="message other-message float-right">
                     {content}
+                    <img src={imageURL} alt="" style={{maxWidth:"600px"}} />
                 </div>
+          
             </li>) :
                 (<li>
                     <div className="message-data">
@@ -21,7 +24,9 @@ const Messenge = ({ content, name, date, owner }) => {
                     </div>
                     <div className="message my-message">
                     {content}
+                    <img src={imageURL} alt="" style={{maxWidth:"600px"}} />
               </div>
+    
                 </li>)}
         </Fragment>
 

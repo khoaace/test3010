@@ -137,7 +137,6 @@ function handleSortUser(auth, users, messages){
   return {...user,lastChat:"0"};
   });
 let lastresult = _.orderBy(result, 'lastChat','desc');
-  console.log(lastresult);
   return lastresult;
 }
 

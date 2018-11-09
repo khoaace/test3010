@@ -10,6 +10,7 @@ import * as serviceWorker from "./serviceWorker";
 import { compose } from "redux";
 import { reactReduxFirebase } from "react-redux-firebase";
 import firebase from "firebase";
+import { reduxFirestore, firestoreReducer } from 'redux-firestore'
 
 // Firebase config
 const firebaseConfig = {
@@ -32,7 +33,7 @@ const config = {
 };
 
 // Add redux Firebase to compose
-const createStoreWithFirebase = compose(reactReduxFirebase(firebase, config))(
+const createStoreWithFirebase = compose(reduxFirestore(firebase),reactReduxFirebase(firebase, config))(
   createStore
 );
 

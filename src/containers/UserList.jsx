@@ -110,24 +110,22 @@ function handleSortUser(auth, users, messages) {
   users_arr = _.map(users, (val, id) => {
     return { ...val, id: id };
   });
-  if (messages !== null) {
-    let result = users_arr.map((user, index) => {
-      if (sortUid(auth.uid, user.userId) in messages) {
-        if (messages[sortUid(auth.uid, user.userId)] !== null) {
-          let user_messgage = Object.values(
-            messages[sortUid(auth.uid, user.userId)]
-          );
-          let time = user_messgage[user_messgage.length - 1].chatTime;
-          return { ...user, lastChat: time };
-        } else {
-          return { ...user, lastChat: "0" };
-        }
+  let result = users_arr.map((user, index) => {
+    if (sortUid(auth.uid, user.userId) in messages) {
+      if (messages[sortUid(auth.uid, user.userId)] !== null) {
+        let user_messgage = Object.values(
+          messages[sortUid(auth.uid, user.userId)]
+        );
+        let time = user_messgage[user_messgage.length - 1].chatTime;
+        return { ...user, lastChat: time };
+      } else {
+        return { ...user, lastChat: "0" };
       }
-      return { ...user, lastChat: "0" };
-    });
-    let lastresult = _.orderBy(result, "lastChat", "desc");
-    return lastresult;
-  } else return users_arr;
+    }
+    return { ...user, lastChat: "0" };
+  });
+  let lastresult = _.orderBy(result, "lastChat", "desc");
+  return lastresult;
 }
 
 function sortUid(user1_id, user2_id) {

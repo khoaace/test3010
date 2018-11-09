@@ -5,7 +5,15 @@ import { firebaseConnect, getVal, isEmpty } from "react-redux-firebase";
 import { withRouter } from "react-router";
 import Message from "../components/Message";
 import UserList from "../containers/UserList";
+
 import Button from "@material-ui/core/Button";
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import DialogTitle from '@material-ui/core/DialogTitle';
+import Slide from '@material-ui/core/Slide';
+import Input from '@material-ui/core/Input';
 
 import history from "../history";
 
@@ -19,6 +27,12 @@ const ROOT_CSS = css({
   width: "100%"
 });
 
+const filesPath = 'uploadedFiles';
+
+function Transition(props) {
+  return <Slide direction="up" {...props} />;
+}
+
 const enhance = compose(
   firebaseConnect(props => {
     return [
@@ -26,10 +40,11 @@ const enhance = compose(
         path: `messages/${props.match.params.user1}-${props.match.params.user2}`
       },
       { path: `users/${props.match.params.user1}` },
-      { path: `users/${props.match.params.user2}` }
+      { path: `users/${props.match.params.user2}` },
+      { path: filesPath }
     ];
   }),
-  connect(({ firebase }, props) => ({
+  connect(( firebase ,props) => ({
     messages: getVal(
       firebase,
       `data/messages/${props.match.params.user1}-${props.match.params.user2}`
@@ -37,15 +52,23 @@ const enhance = compose(
     auth: firebase.auth,
     user1: getVal(firebase, `data/users/${props.match.params.user1}`),
     user2: getVal(firebase, `data/users/${props.match.params.user2}`),
-    authExists: !!firebase.auth && !!firebase.auth.uid
+    authExists: !!firebase.auth && !!firebase.auth.uid,
   }))
 );
 
 class ChatBox extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { content: "" };
+    this.state = { content: "", open: false, imageURL: '' };
   }
+
+  handleClickOpen = () => {
+    this.setState({ open: true });
+  };
+
+  handleClose = () => {
+    this.setState({ open: false });
+  };
 
   componentWillReceiveProps({ authExists, user1, user2, auth }) {
     if (isEmpty(auth)) {
@@ -66,6 +89,10 @@ class ChatBox extends React.Component {
     this.setState({ content: e.target.value });
   };
 
+  handleChangeImageContent = e => {
+    this.setState({ imageURL: e.target.value });
+  };
+
   scrollToBottom() {
     const scrollHeight = this.messageList.scrollHeight;
     const height = this.messageList.clientHeight;
@@ -77,21 +104,33 @@ class ChatBox extends React.Component {
     this.scrollToBottom();
   }
 
+  handleUploadfile=(event)=>{
+    const file = event.target.files[0]
+    this.props.firebase.uploadFiles(filesPath, file, filesPath);
+    console.log(event.target.files[0]);
+  }
+
   handleClick = async () => {
+    if (this.state.open) {
+      if (!testImage(this.state.imageURL)) {
+        alert('Wrong image URL');
+        return;
+      }
+
+    }
     if (!isEmpty(this.props.auth)) {
       await this.props.firebase.push(
-        `messages/${this.props.match.params.user1}-${
-          this.props.match.params.user2
-        }`,
+        `messages/${this.props.match.params.user1}-${this.props.match.params.user2}`,
         {
           content: this.state.content,
           userId: this.props.auth.uid,
           chatTime: moment().toISOString(),
-          username: this.props.auth.displayName
+          username: this.props.auth.displayName,
+          imageURL: this.state.imageURL
         }
       );
     }
-    await this.setState({ content: "" });
+    await this.setState({ content: "", imageURL: "", open: false });
   };
 
   render() {
@@ -110,6 +149,7 @@ class ChatBox extends React.Component {
     }
     var renderMessages = messages_Arr.map((message, index) => {
       if (!isEmpty(messages)) {
+        console.log(message.imageURL);
         if (message.userId === auth.uid)
           return (
             <Message
@@ -118,6 +158,7 @@ class ChatBox extends React.Component {
               name={message.username}
               date={moment(message.chatTime).format("LLL")}
               owner={true}
+              imageURL={message.imageURL}
             />
           );
         else
@@ -128,6 +169,7 @@ class ChatBox extends React.Component {
               name={message.username}
               date={moment(message.chatTime).format("LLL")}
               owner={false}
+              imageURL={message.imageURL}
             />
           );
       }
@@ -135,6 +177,45 @@ class ChatBox extends React.Component {
 
     return (
       <Fragment>
+
+        {/* Dialog for image link input */}
+        <Dialog
+          open={this.state.open}
+          TransitionComponent={Transition}
+          keepMounted
+          onClose={this.handleClose}
+          aria-labelledby="alert-dialog-slide-title"
+          aria-describedby="alert-dialog-slide-description"
+        >
+          <DialogTitle id="alert-dialog-slide-title">
+            {"Insert your image URL"}
+          </DialogTitle>
+          <DialogContent>
+            <DialogContentText id="alert-dialog-slide-description">
+              <Input
+                placeholder="Image URL"
+                inputProps={{
+                  'aria-label': 'Image URL',
+                }}
+                onChange={e => this.handleChangeImageContent(e)}
+                value={this.state.imageURL}
+                style={{ width: "100%" }}
+              />
+              Preview
+              <img src={this.state.imageURL} style={{ maxWidth: "600px" }} alt="preview" />
+              <input type="file" onChange={this.handleUploadfile}/>
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={this.handleClose} color="secondary">
+              Cancel
+            </Button>
+            <Button onClick={this.handleClick} color="primary">
+              Send
+            </Button>
+          </DialogActions>
+        </Dialog>
+
         <UserList />
         <div className="chat">
           <div className="chat-header clearfix">
@@ -177,18 +258,29 @@ class ChatBox extends React.Component {
             />
             <i className="fa fa-file-o" />
             <i className="fa fa-file-image-o" />
-            <Button
-              onClick={this.handleClick}
-              variant="contained"
-              color="secondary"
-            >
-              Send
-            </Button>
+            <Button onClick={this.handleClick} variant="contained" color="secondary">Send</Button>
+            <Button onClick={this.handleClickOpen} variant="contained" color="secondary">Image</Button>
           </div>
         </div>
       </Fragment>
     );
   }
 }
+
+function testImage(URL) {
+  try {
+    var img = document.createElement("img");
+    img.src = URL;
+  } catch (err) {
+    return false;
+  }
+
+  if (img.height > 0) {
+    return true;
+  } else {
+    return false;
+  }
+}
+
 
 export default withRouter(enhance(ChatBox));

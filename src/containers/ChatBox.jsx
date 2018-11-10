@@ -107,7 +107,6 @@ class ChatBox extends React.Component {
   handleUploadfile = event => {
     const file = event.target.files[0];
     this.props.firebase.uploadFiles(filesPath, file, filesPath);
-    console.log(event.target.files[0]);
   };
 
   handleClick = async () => {
@@ -136,8 +135,6 @@ class ChatBox extends React.Component {
 
   render() {
     const { messages, auth, match, user1, user2 } = this.props;
-    console.log(user1);
-    console.log(user2);
     var otherUser = {};
     if (!isEmpty(user1) && !isEmpty(user2)) {
       if (match.params.user1 === auth.uid) otherUser = user2;
@@ -153,7 +150,6 @@ class ChatBox extends React.Component {
 
     var renderMessages = messages_Arr.map((message, index) => {
       if (!isEmpty(messages)) {
-        console.log(message.imageURL);
         if (message.userId === auth.uid)
           return (
             <Message

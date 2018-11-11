@@ -38,6 +38,7 @@ class UserList extends React.Component {
         ) {
           return user;
         }
+        return null;
       });
       userArr = usersSearchArr;
     } else {
@@ -65,7 +66,7 @@ class UserList extends React.Component {
   };
 
   render() {
-    const { firebase, users, presence, messages, auth } = this.props;
+    const { users, presence, messages, auth } = this.props;
     var user_Render = [];
     if (
       !isEmpty(users) &&
@@ -111,6 +112,7 @@ class UserList extends React.Component {
             );
           }
         }
+        return null;
       });
     }
     return (

@@ -5,6 +5,7 @@ import { firebaseConnect, getVal, isEmpty } from "react-redux-firebase";
 import { withRouter } from "react-router";
 import Message from "../components/Message";
 import UserList from "../containers/UserList";
+import UploadImage from "./UploadImage";
 
 import Button from "@material-ui/core/Button";
 import Dialog from "@material-ui/core/Dialog";
@@ -59,7 +60,7 @@ const enhance = compose(
 class ChatBox extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { content: "", open: false, imageURL: "" };
+    this.state = { content: "", open: false, imageURL: "", nameImage: "" };
   }
 
   handleClickOpen = () => {
@@ -84,6 +85,13 @@ class ChatBox extends React.Component {
         history.replace("/error");
     }
   }
+
+  getNameImage = async name => {
+    await this.setState({ nameImage: name });
+    await console.log("da vo day getname");
+    await console.log(this.state.imageURL);
+    await this.getImageURLFromFS();
+  };
 
   handleChangeContent = e => {
     this.setState({ content: e.target.value });
@@ -116,6 +124,7 @@ class ChatBox extends React.Component {
         return;
       }
     }
+
     if (!isEmpty(this.props.auth)) {
       await this.props.firebase.push(
         `messages/${this.props.match.params.user1}-${
@@ -131,6 +140,21 @@ class ChatBox extends React.Component {
       );
     }
     await this.setState({ content: "", imageURL: "", open: false });
+  };
+
+  getImageURLFromFS = async () => {
+    console.log("da vo day");
+    const {
+      firebase: { storage }
+    } = this.props;
+    const storageRef = await storage().ref();
+    storageRef
+      .child(`uploadedFiles/${this.state.nameImage}`)
+      .getDownloadURL()
+      .then(url => {
+        this.setState({ imageURL: url });
+      })
+      .catch(function(error) {});
   };
 
   render() {
@@ -173,6 +197,7 @@ class ChatBox extends React.Component {
             />
           );
       }
+      return null;
     });
 
     return (
@@ -190,24 +215,25 @@ class ChatBox extends React.Component {
             {"Insert your image URL"}
           </DialogTitle>
           <DialogContent>
-            <DialogContentText id="alert-dialog-slide-description">
-              <Input
-                placeholder="Image URL"
-                inputProps={{
-                  "aria-label": "Image URL"
-                }}
-                onChange={e => this.handleChangeImageContent(e)}
-                value={this.state.imageURL}
-                style={{ width: "100%" }}
-              />
-              Preview
-              <img
-                src={this.state.imageURL}
-                style={{ maxWidth: "600px" }}
-                alt="preview"
-              />
-              <input type="file" onChange={this.handleUploadfile} />
-            </DialogContentText>
+            <DialogContentText id="alert-dialog-slide-description" />
+            <Input
+              placeholder="Image URL"
+              inputProps={{
+                "aria-label": "Image URL"
+              }}
+              onChange={e => this.handleChangeImageContent(e)}
+              value={this.state.imageURL}
+              style={{ width: "100%" }}
+            />
+            Preview
+            <hr />
+            <img
+              src={this.state.imageURL}
+              style={{ maxWidth: "600px" }}
+              alt="preview"
+            />
+            <hr />
+            <UploadImage getNameImage={this.getNameImage} />
           </DialogContent>
           <DialogActions>
             <Button onClick={this.handleClose} color="secondary">

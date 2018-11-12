@@ -21,6 +21,7 @@ import history from "../history";
 import ScrollToBottom from "react-scroll-to-bottom";
 import { css } from "glamor";
 
+
 var moment = require("moment");
 
 const ROOT_CSS = css({
@@ -53,7 +54,8 @@ const enhance = compose(
     auth: firebase.auth,
     user1: getVal(firebase, `data/users/${props.match.params.user1}`),
     user2: getVal(firebase, `data/users/${props.match.params.user2}`),
-    authExists: !!firebase.auth && !!firebase.auth.uid
+    authExists: !!firebase.auth && !!firebase.auth.uid,
+    profile: firebase.profile
   }))
 );
 
@@ -88,8 +90,6 @@ class ChatBox extends React.Component {
 
   getNameImage = async name => {
     await this.setState({ nameImage: name });
-    await console.log("da vo day getname");
-    await console.log(this.state.imageURL);
     await this.getImageURLFromFS();
   };
 
@@ -128,7 +128,7 @@ class ChatBox extends React.Component {
     if (!isEmpty(this.props.auth)) {
       await this.props.firebase.push(
         `messages/${this.props.match.params.user1}-${
-          this.props.match.params.user2
+        this.props.match.params.user2
         }`,
         {
           content: this.state.content,
@@ -143,7 +143,6 @@ class ChatBox extends React.Component {
   };
 
   getImageURLFromFS = async () => {
-    console.log("da vo day");
     const {
       firebase: { storage }
     } = this.props;
@@ -154,13 +153,54 @@ class ChatBox extends React.Component {
       .then(url => {
         this.setState({ imageURL: url });
       })
-      .catch(function(error) {});
+      .catch(function (error) { });
   };
 
+  handleClickStar = () => {
+    const { firebase, match, profile } = this.props;
+    if (!isEmpty(profile)) {
+      if (profile.userId !== match.params.user1) {
+
+        let pos = profile.favoriteList.map(function (e) { return e.id; }).indexOf(match.params.user1);
+        if (pos !== -1) {
+          profile.favoriteList[pos].favorite = !profile.favoriteList[pos].favorite;
+        }
+      }
+      else {
+        let pos = profile.favoriteList.map(function (e) { return e.id; }).indexOf(match.params.user2);
+        if (pos !== -1) {
+          profile.favoriteList[pos].favorite = !profile.favoriteList[pos].favorite;
+        }
+      }
+      firebase
+        .database()
+        .ref("users/" + profile.userId + "/favoriteList")
+        .set(profile.favoriteList);
+    }
+  }
+
   render() {
-    const { messages, auth, match, user1, user2 } = this.props;
+    const { messages, auth, match, user1, user2, profile } = this.props;
     var otherUser = {};
-    if (!isEmpty(user1) && !isEmpty(user2)) {
+    var isFavorite = false;
+    if (!isEmpty(user1) && !isEmpty(user2) && !isEmpty(profile)) {
+      if (profile.userId !== match.params.user1) {
+        if (profile.favoriteList !== undefined && profile.favoriteList !== null) {
+          let pos = profile.favoriteList.map(function (e) { return e.id; }).indexOf(match.params.user1);
+          if (pos !== -1) {
+            isFavorite = profile.favoriteList[pos].favorite;
+          }
+        }
+      }
+      else {
+        if (profile.favoriteList !== undefined && profile.favoriteList !== null) {
+          let pos = profile.favoriteList.map(function (e) { return e.id; }).indexOf(match.params.user2);
+          if (pos !== -1) {
+            isFavorite = profile.favoriteList[pos].favorite;
+          }
+        }
+      }
+
       if (match.params.user1 === auth.uid) otherUser = user2;
       else otherUser = user1;
     }
@@ -261,7 +301,7 @@ class ChatBox extends React.Component {
             <div className="chat-about">
               <div className="chat-with">Chat with {otherUser.displayName}</div>
             </div>
-            <i className="fa fa-star" />
+            {isFavorite ? <i className="fa fa-star" style={{ color: "red" }} onClick={this.handleClickStar} /> : <i className="far fa-star" onClick={this.handleClickStar} />}
           </div>{" "}
           {/* end chat-header */}
           <div className="chat-history">

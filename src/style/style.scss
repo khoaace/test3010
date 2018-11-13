@@ -75,7 +75,7 @@ ul {
   background: #f2f5f8;
   border-top-right-radius: 5px;
   border-bottom-right-radius: 5px;
-
+  word-wrap: break-word;
   color: #434651;
 
   .chat-header {
@@ -113,7 +113,7 @@ ul {
     padding: 30px 30px 20px;
     border-bottom: 2px solid white;
     height: 55vh;
-
+    word-wrap: break-word;
     .message-data {
       margin-bottom: 15px;
     }
@@ -150,11 +150,12 @@ ul {
 
     .my-message {
       background: $green;
+      word-wrap: break-word;
     }
 
     .other-message {
       background: $blue;
-
+      word-wrap: break-word;
       &:after {
         border-bottom-color: $blue;
         left: 93%;
@@ -164,6 +165,8 @@ ul {
 
   .chat-message {
     padding: 30px;
+
+    word-wrap: break-word;
 
     textarea {
       width: 100%;

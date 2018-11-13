@@ -3,7 +3,7 @@ import { firebaseConnect, isLoaded, isEmpty } from "react-redux-firebase";
 
 import { compose } from "redux";
 import { connect } from "react-redux";
-import UserSection from "./User";
+import UserSection from "../components/User";
 import List from "@material-ui/core/List";
 
 import Notification from "../components/Notification";

@@ -57,6 +57,10 @@ class Navbar extends Component {
   };
 
   handleSignOut = () => {
+    this.props.firebase
+    .database()
+    .ref("users/" + this.props.auth.uid + "/lastLogin")
+    .set(moment().toISOString());
     this.props.firebase.logout();
     window.location.href = "/";
     this.setState({ anchorEl: null });

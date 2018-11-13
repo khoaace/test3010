@@ -3,7 +3,7 @@ import "./App.css";
 import { BrowserRouter } from "react-router-dom";
 import { routesMain } from "./routes/index";
 
-import Navbar from "./containers/Navbar/Navbar";
+import Navbar from "./containers/Navbar";
 
 class App extends Component {
   render() {

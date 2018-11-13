@@ -25,7 +25,7 @@ import { css } from "glamor";
 var moment = require("moment");
 
 const ROOT_CSS = css({
-  height: 515,
+  height: "48vh",
   width: "100%"
 });
 

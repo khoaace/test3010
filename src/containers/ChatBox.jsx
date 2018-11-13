@@ -125,6 +125,12 @@ class ChatBox extends React.Component {
       }
     }
 
+    if(this.state.content.trim() === "")
+    {
+      alert("Content should not empty");
+      return;
+    }
+
     if (!isEmpty(this.props.auth)) {
       await this.props.firebase.push(
         `messages/${this.props.match.params.user1}-${
